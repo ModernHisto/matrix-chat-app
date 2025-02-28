@@ -26,7 +26,6 @@ export function useMatrix() {
         userId: accessToken.user_id,
       });
 
-      
       // Запускаем клиент и ждем синхронизации
       await client.value.startClient({ initialSyncLimit: 10 });
       await fetchRooms();
@@ -58,6 +57,12 @@ export function useMatrix() {
 
       // Получаем комнаты
       rooms.value = Array.from(client.value.getRooms()).map((room) => {
+        const accessToken = client.value.getAccessToken(); // Получаем токен доступа
+        const avatarUrl = room.getAvatarUrl(client.value.getHomeserverUrl());
+
+        // Добавляем токен доступа к URL изображения
+        const avatarUrlWithToken = avatarUrl ? `${avatarUrl}?access_token=${accessToken}` : null;
+
         // Подписываемся на события комнаты для обновления данных
         room.on('Room.timeline', (event) => {
           const roomIndex = rooms.value.findIndex((r) => r.id === room.roomId);
@@ -67,15 +72,13 @@ export function useMatrix() {
             rooms.value[roomIndex].unreadCount = room.getUnreadNotificationCount();
           }
         });
-        
-        console.log(rooms.value);
-        
+
         return {
           id: room.roomId,
           name: room.name || room.canonicalAlias || room.roomId,
           lastEvent: room.timeline[room.timeline.length - 1],
-          unreadCount: room.getUnreadNotificationCount(room.myUserId),
-          avatarUrl: room.getAvatarUrl(window.location.origin),
+          unreadCount: room.getUnreadNotificationCount(),
+          avatarUrl: avatarUrlWithToken || null, // Используем URL с токеном или заглушку
         };
       });
 

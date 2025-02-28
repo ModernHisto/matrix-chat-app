@@ -49,9 +49,9 @@ import router from '../router';
 export default {
   setup() {
     const { login, error } = useMatrix();
-    const homeServer = ref('https://converser.eu');
-    const username = ref('TestyTestovich');
-    const password = ref('zxcdsaqwe321');
+    const homeServer = ref(''); // Тестовый https://converser.eu
+    const username = ref(''); // Тестовый TestyTestovich
+    const password = ref(''); // Тестовый zxcdsaqwe321
 
     const handleLogin = async () => {
       await login(homeServer.value, username.value, password.value);

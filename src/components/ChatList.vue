@@ -22,11 +22,11 @@
         />
         <div class="room-info">
           <strong>{{ room.name }}</strong>
-          <span class="last-message">
-            {{ room.lastEvent?.content?.body || 'Нет сообщений' }}
-          </span>
           <span v-if="room.unreadCount > 0" class="unread-count">
             Непрочитанных: {{ room.unreadCount }}
+          </span>
+          <span v-else class="last-message">
+            {{  'Нет сообщений' }}
           </span>
         </div>
       </li>
@@ -39,6 +39,7 @@
 <script>
 import { ref } from 'vue';
 import { useMatrix } from '../composables/useMatrix.js';
+
 export default {
   setup() {
     const { rooms, sortRooms, error } = useMatrix();
